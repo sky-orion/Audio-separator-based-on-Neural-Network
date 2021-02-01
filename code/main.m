@@ -1,13 +1,13 @@
 firstTrainingAudioFile   = "f.mp3";
 secondTrainingAudioFile = "m.mp3";
-C=1;%ÓÃÓÚÇ¿»¯±³¾°ÒôÀÖ
+C=1;%ç”¨äºå¼ºåŒ–èƒŒæ™¯éŸ³ä¹
 firstsongTrain   = C*audioread(firstTrainingAudioFile);
 secondsongTrain = audioread(secondTrainingAudioFile);
 
  
-L=500000;%²ÉÑùÖµ
+L=500000;%é‡‡æ ·å€¼
 firstsongTrain   = firstsongTrain(L:2*L);
-secondsongTrain = secondsongTrain(L:2*L);%ÑµÁ·¼¯
+secondsongTrain = secondsongTrain(L:2*L);%è®­ç»ƒé›†
 firstValidationAudioFile   ="f.mp3";
 secondValidationAudioFile =  "m.mp3";
 
@@ -17,12 +17,12 @@ secondsongValidate = audioread(secondValidationAudioFile);
  
  L1=1000000;
 firstsongValidate   = firstsongValidate(3*L1:4*L1);
-secondsongValidate = secondsongValidate(2.5*L1:3.5*L1);%ÑéÖ¤¼¶
+secondsongValidate = secondsongValidate(2.5*L1:3.5*L1);%éªŒè¯çº§
 
-% ½«ÑµÁ·ĞÅºÅËõ·Åµ½ÏàÍ¬µÄ¹¦ÂÊ¡£½«ÑéÖ¤ĞÅºÅËõ·Åµ½ÏàÍ¬µÄ¹¦ÂÊ¡£
-firstsongTrain  =firstsongTrain/norm(firstsongTrain);%ÑµÁ·¼¯,
+% å°†è®­ç»ƒä¿¡å·ç¼©æ”¾åˆ°ç›¸åŒçš„åŠŸç‡ã€‚å°†éªŒè¯ä¿¡å·ç¼©æ”¾åˆ°ç›¸åŒçš„åŠŸç‡ã€‚
+firstsongTrain  =firstsongTrain/norm(firstsongTrain);%è®­ç»ƒé›†,
 secondsongTrain = secondsongTrain/norm(secondsongTrain);
-firstsongValidate  = firstsongValidate/norm(firstsongValidate);%ÑéÖ¤¼¯
+firstsongValidate  = firstsongValidate/norm(firstsongValidate);%éªŒè¯é›†
 secondsongValidate = secondsongValidate/norm(secondsongValidate);
 
 mixTrain = firstsongTrain + secondsongTrain;
@@ -40,14 +40,14 @@ P_mix0 = stft(mixTrain,'Window',win,'OverlapLength',OverlapLength,'FFTLength',FF
 P_f    = abs(stft(firstsongTrain,'Window',win,'OverlapLength',OverlapLength,'FFTLength',FFTLength));
 P_s    = abs(stft(secondsongTrain,'Window',win,'OverlapLength',OverlapLength,'FFTLength',FFTLength));
 N      = 1 + FFTLength/2;
-P_mix0 = P_mix0(N-1:end,:);%Éú³ÉÑµÁ· STFT¡£
+P_mix0 = P_mix0(N-1:end,:);%ç”Ÿæˆè®­ç»ƒ STFTã€‚
 P_f    = P_f(N-1:end,:);
 P_s    = P_s(N-1:end,:);
-P_mix = log(abs(P_mix0) + eps);%¶Ô»ìÒô STFT È¡¶ÔÊı¡£Í¨¹ı¾ùÖµºÍ±ê×¼²î¶ÔÕâĞ©Öµ½øĞĞ¹éÒ»»¯
+P_mix = log(abs(P_mix0) + eps);%å¯¹æ··éŸ³ STFT å–å¯¹æ•°ã€‚é€šè¿‡å‡å€¼å’Œæ ‡å‡†å·®å¯¹è¿™äº›å€¼è¿›è¡Œå½’ä¸€åŒ–
 MP    = mean(P_mix(:));
 SP    = std(P_mix(:));
 P_mix = (P_mix - MP) / SP;
-%Éú³ÉÑéÖ¤ STFT¡£
+%ç”ŸæˆéªŒè¯ STFTã€‚
 P_Val_mix0 = stft(mixValidate,'Window',win,'OverlapLength',OverlapLength,'FFTLength',FFTLength);
 P_Val_f    = abs(stft(firstsongValidate,'Window',win,'OverlapLength',OverlapLength,'FFTLength',FFTLength));
 P_Val_s    = abs(stft(secondsongValidate,'Window',win,'OverlapLength',OverlapLength,'FFTLength',FFTLength));
@@ -56,16 +56,16 @@ P_Val_s    = abs(stft(secondsongValidate,'Window',win,'OverlapLength',OverlapLen
 P_Val_f    = P_Val_f(N-1:end,:);
 P_Val_s    = P_Val_s(N-1:end,:);
 
-P_Val_mix = log(abs(P_Val_mix0) + eps);%¶ÔÑéÖ¤ STFT È¡¶ÔÊı¡£Í¨¹ı¾ùÖµºÍ±ê×¼²î¶ÔÕâĞ©Öµ½øĞĞ¹éÒ»»¯
+P_Val_mix = log(abs(P_Val_mix0) + eps);%å¯¹éªŒè¯ STFT å–å¯¹æ•°ã€‚é€šè¿‡å‡å€¼å’Œæ ‡å‡†å·®å¯¹è¿™äº›å€¼è¿›è¡Œå½’ä¸€åŒ–
 MP        = mean(P_Val_mix(:));
 SP        = std(P_Val_mix(:));
 P_Val_mix = (P_Val_mix - MP) / SP;
 
-maskTrain    = P_f ./ (P_f + P_s + eps);%ÑµÁ·¼¯Êä³öÎªµÚÒ»Ê×¸èµÄÀíÏëÈíÑÚÄ¤
-maskValidate = P_Val_f ./ (P_Val_f + P_Val_s + eps);%ÑéÖ¤¼¯Êä³öÎªµÚÒ»Ê×¸èµÄÀíÏëÈíÑÚÄ¤
+maskTrain    = P_f ./ (P_f + P_s + eps);%è®­ç»ƒé›†è¾“å‡ºä¸ºç¬¬ä¸€é¦–æ­Œçš„ç†æƒ³è½¯æ©è†œ
+maskValidate = P_Val_f ./ (P_Val_f + P_Val_s + eps);%éªŒè¯é›†è¾“å‡ºä¸ºç¬¬ä¸€é¦–æ­Œçš„ç†æƒ³è½¯æ©è†œ
 
 
-% ¸ù¾İÔ¤²â±äÁ¿ºÍÄ¿±êĞÅºÅ´´½¨´óĞ¡Îª (65,20) µÄ·Ö¿é¡£ÎªÁË»ñµÃ¸ü¶àÑµÁ·Ñù±¾£¬ÔÚÁ¬Ğø·Ö¿éÖ®¼äÊ¹ÓÃ 10 ¸ö¶Î×÷ÎªÖØµşÁ¿¡£
+% æ ¹æ®é¢„æµ‹å˜é‡å’Œç›®æ ‡ä¿¡å·åˆ›å»ºå¤§å°ä¸º (65,20) çš„åˆ†å—ã€‚ä¸ºäº†è·å¾—æ›´å¤šè®­ç»ƒæ ·æœ¬ï¼Œåœ¨è¿ç»­åˆ†å—ä¹‹é—´ä½¿ç”¨ 10 ä¸ªæ®µä½œä¸ºé‡å é‡ã€‚
 seqLen        = 20;
 seqOverlap    = 10;
 mixSequences  = zeros(1 + FFTLength/2,seqLen,1,0);
@@ -73,8 +73,8 @@ maskSequences = zeros(1 + FFTLength/2,seqLen,1,0);
 
 loc = 1;
 while loc < size(P_mix,2) - seqLen
-    mixSequences(:,:,:,end+1)  = P_mix(:,loc:loc+seqLen-1); %ÑµÁ·¼¯ÓÃstft
-    maskSequences(:,:,:,end+1) = maskTrain(:,loc:loc+seqLen-1); %ÑµÁ·¼¯ÓÃÄĞĞÔµÄÀíÏëÈíÑÚÄ¤
+    mixSequences(:,:,:,end+1)  = P_mix(:,loc:loc+seqLen-1); %è®­ç»ƒé›†ç”¨stft
+    maskSequences(:,:,:,end+1) = maskTrain(:,loc:loc+seqLen-1); %è®­ç»ƒé›†ç”¨ç”·æ€§çš„ç†æƒ³è½¯æ©è†œ
 
     loc                        = loc + seqOverlap;
 end
@@ -84,11 +84,11 @@ seqOverlap       = seqLen;
 
 loc = 1;
 while loc < size(P_Val_mix,2) - seqLen
-    mixValSequences(:,:,:,end+1)  = P_Val_mix(:,loc:loc+seqLen-1); %ÑéÖ¤¼¯ÓÃstft
-    maskValSequences(:,:,:,end+1) = maskValidate(:,loc:loc+seqLen-1); %ÑéÖ¤¼¯ÓÃÄĞĞÔµÄÀíÏëÈíÑÚÄ¤
+    mixValSequences(:,:,:,end+1)  = P_Val_mix(:,loc:loc+seqLen-1); %éªŒè¯é›†ç”¨stft
+    maskValSequences(:,:,:,end+1) = maskValidate(:,loc:loc+seqLen-1); %éªŒè¯é›†ç”¨ç”·æ€§çš„ç†æƒ³è½¯æ©è†œ
     loc                           = loc + seqOverlap;
 end
-% ÑµÁ·ĞÅºÅÖØ¹¹
+% è®­ç»ƒä¿¡å·é‡æ„
 mixSequencesT  = reshape(mixSequences,    [1 1 (1 + FFTLength/2) * seqLen size(mixSequences,4)]);
 mixSequencesV  = reshape(mixValSequences, [1 1 (1 + FFTLength/2) * seqLen size(mixValSequences,4)]);
 maskSequencesT = reshape(maskSequences,   [1 1 (1 + FFTLength/2) * seqLen size(maskSequences,4)]);
@@ -140,35 +140,35 @@ else
     s = load("CocktailPartyNet.mat");
     CocktailPartyNet = s.CocktailPartyNet;
 end
-% ½«ÑéÖ¤Ô¤²â±äÁ¿´«µİ¸øÍøÂç¡£Êä³öÊÇ¹À¼ÆµÄÑÚÄ¤¡£
+% å°†éªŒè¯é¢„æµ‹å˜é‡ä¼ é€’ç»™ç½‘ç»œã€‚è¾“å‡ºæ˜¯ä¼°è®¡çš„æ©è†œã€‚
 estimatedMasks0 = predict(CocktailPartyNet,mixSequencesV);
 estimatedMasks0 = estimatedMasks0.';
 estimatedMasks0 = reshape(estimatedMasks0,1 + FFTLength/2,numel(estimatedMasks0)/(1 + FFTLength/2));
 
-% ¹À¼ÆµÚÒ»Ê×¸èºÍµÚ¶şÊ×¸èµÄÈíÑÚÄ¤¡£Í¨¹ıÎªÈíÑÚÄ¤ÉèÖÃãĞÖµÀ´¹À¼ÆµÚÒ»Ê×¸èºÍµÚ¶şÊ×¸èµÄ¶şÔªÑÚÄ¤¡£
-% ÆÀ¹ÀÈíÄ¤
+% ä¼°è®¡ç¬¬ä¸€é¦–æ­Œå’Œç¬¬äºŒé¦–æ­Œçš„è½¯æ©è†œã€‚é€šè¿‡ä¸ºè½¯æ©è†œè®¾ç½®é˜ˆå€¼æ¥ä¼°è®¡ç¬¬ä¸€é¦–æ­Œå’Œç¬¬äºŒé¦–æ­Œçš„äºŒå…ƒæ©è†œã€‚
+% è¯„ä¼°è½¯è†œ
 SoftfirstMask   = estimatedMasks0; 
-SoftsecondMask = 1 - SoftfirstMask;%µÃµ½µÚ¶şÊ×¸èµÄÈíÄ¤
+SoftsecondMask = 1 - SoftfirstMask;%å¾—åˆ°ç¬¬äºŒé¦–æ­Œçš„è½¯è†œ
 P_Val_mix0 = P_Val_mix0(:,1:size(SoftfirstMask,2));
-P_First = P_Val_mix0 .* SoftfirstMask;%Ô¤²âµÄµÚÒ»Ê×¸èµÄstft
+P_First = P_Val_mix0 .* SoftfirstMask;%é¢„æµ‹çš„ç¬¬ä¸€é¦–æ­Œçš„stft
 P_First = [conj(P_First(end-1:-1:2,:)) ; P_First ];
-%µÃµ½Ô¤²âµÄµÚÒ»Ê×¸èÒôÆµ
+%å¾—åˆ°é¢„æµ‹çš„ç¬¬ä¸€é¦–æ­ŒéŸ³é¢‘
 firstsong_est_soft = istft(P_First, 'Window',win,'OverlapLength',OverlapLength,'FFTLength',FFTLength,'ConjugateSymmetric',true);
 firstsong_est_soft = firstsong_est_soft / max(abs(firstsong_est_soft));
 
 range = (numel(win):numel(firstsong_est_soft)-numel(win));
 t     = range * (1/Fs);
 audiowrite('est1soft.wav',firstsong_est_soft,Fs);
-figure(1)%Éú³ÉÈíÄ¤
+figure(1)%ç”Ÿæˆè½¯è†œ
 subplot(2,1,1)
 plot(t,firstsongValidate(range))
-title("³õÊ¼µÚÒ»Ê×¸èÒôÆµ")
-xlabel("Ê±¼ä (s)")
+title("åˆå§‹ç¬¬ä¸€é¦–æ­ŒéŸ³é¢‘")
+xlabel("æ—¶é—´ (s)")
 grid on
 subplot(2,1,2)
 plot(t,firstsong_est_soft(range))
-xlabel("Ê±¼ä (s)")
-title("ÓÉÉñ¾­ÍøÂç·ÖÀëµÄµÚÒ»Ê×¸èÒôÆµ(ÈíÄ¤)")
+xlabel("æ—¶é—´ (s)")
+title("ç”±ç¥ç»ç½‘ç»œåˆ†ç¦»çš„ç¬¬ä¸€é¦–æ­ŒéŸ³é¢‘(è½¯è†œ)")
 grid on;
 
 
@@ -184,16 +184,16 @@ audiowrite('est2soft.wav',secondsong_est_soft,Fs);
 figure(2)
 subplot(2,1,1)
 plot(t,secondsongValidate(range))
-title("³õÊ¼µÚ¶şÊ×¸èÒôÆµ")
-xlabel("Ê±¼ä (s)")
+title("åˆå§‹ç¬¬äºŒé¦–æ­ŒéŸ³é¢‘")
+xlabel("æ—¶é—´ (s)")
 grid on
 subplot(2,1,2)
 plot(t,secondsong_est_soft(range))
-xlabel("Ê±¼ä (s)")
-title("ÓÉÉñ¾­ÍøÂç·ÖÀëµÄµÚ¶şÊ×¸èÒôÆµ(ÈíÄ¤)")
+xlabel("æ—¶é—´ (s)")
+title("ç”±ç¥ç»ç½‘ç»œåˆ†ç¦»çš„ç¬¬äºŒé¦–æ­ŒéŸ³é¢‘(è½¯è†œ)")
 grid on
 
-% ÆÀ¹À¶şÔªÄ¤
+% è¯„ä¼°äºŒå…ƒè†œ
 HardFirstMask   = (SoftfirstMask >= 0.5);
 HardSecondMask = (SoftfirstMask < 0.5);
 P_First = P_Val_mix0 .* HardFirstMask;
@@ -220,31 +220,31 @@ t   = range * (1/Fs);
 figure(3)
 subplot(2,1,1)
 plot(t,firstsongValidate(range))
-title("³õÊ¼µÚÒ»Ê×¸èÒôÆµ")
-xlabel("Ê±¼ä (s)")
+title("åˆå§‹ç¬¬ä¸€é¦–æ­ŒéŸ³é¢‘")
+xlabel("æ—¶é—´ (s)")
 grid on
 subplot(2,1,2)
 plot(t,first_est_hard(range))
-xlabel("Ê±¼ä (s)")
-title("ÓÉÉñ¾­ÍøÂç·ÖÀëµÄµÚÒ»Ê×¸èÒôÆµ(¶şÔªÄ¤)")
+xlabel("æ—¶é—´ (s)")
+title("ç”±ç¥ç»ç½‘ç»œåˆ†ç¦»çš„ç¬¬ä¸€é¦–æ­ŒéŸ³é¢‘(äºŒå…ƒè†œ)")
 grid on
 audiowrite('est1binary.wav',first_est_hard,Fs);
 
 figure(4)
 subplot(2,1,1)
 plot(t,secondsongValidate(range))
-title("³õÊ¼µÚ¶şÊ×¸èÒôÆµ")
-xlabel("Ê±¼ä (s)")
+title("åˆå§‹ç¬¬äºŒé¦–æ­ŒéŸ³é¢‘")
+xlabel("æ—¶é—´ (s)")
 grid on
 subplot(2,1,2)
 plot(t,second_est_hard(range))
-title("ÓÉÉñ¾­ÍøÂç·ÖÀëµÄµÚ¶şÊ×¸èÒôÆµ(¶şÔªÄ¤)")
-xlabel("Ê±¼ä (s)")
+title("ç”±ç¥ç»ç½‘ç»œåˆ†ç¦»çš„ç¬¬äºŒé¦–æ­ŒéŸ³é¢‘(äºŒå…ƒè†œ)")
+xlabel("æ—¶é—´ (s)")
 grid on
 
 audiowrite('est2binary.wav',second_est_hard,Fs);
 figure(6)
 mixValidate=mixValidate(1:size(t,2));
 plot(t,mixValidate);
-title("»ìºÏÒôÆµ")
-xlabel("Ê±¼ä (s)")
+title("æ··åˆéŸ³é¢‘")
+xlabel("æ—¶é—´ (s)")
